@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 240 6% 5%;
+    --foreground: 0 0% 95%;
+
+    --card: 240 5% 8%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 240 5% 10%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 14 100% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 4% 12%;
+    --secondary-foreground: 0 0% 80%;
+
+    --muted: 240 4% 14%;
+    --muted-foreground: 240 5% 50%;
+
+    --accent: 14 100% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 4% 14%;
+    --input: 240 4% 16%;
+    --ring: 14 100% 55%;
+
+    --radius: 0.75rem;
+
+    --warning: 30 100% 50%;
+    --warning-foreground: 0 0% 100%;
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --gradient-accent: linear-gradient(135deg, hsl(0 100% 59%), hsl(25 100% 50%));
+    --gradient-hero: linear-gradient(180deg, hsl(240 6% 5%) 0%, hsl(240 5% 3%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(240 5% 10% / 0.6), hsl(240 5% 8% / 0.4));
+    --gradient-risk-green: linear-gradient(135deg, hsl(142 70% 45%), hsl(160 60% 50%));
+    --gradient-risk-yellow: linear-gradient(135deg, hsl(30 100% 50%), hsl(40 95% 55%));
+    --gradient-risk-red: linear-gradient(135deg, hsl(0 100% 59%), hsl(25 100% 50%));
+
+    --shadow-card: 0 1px 3px hsl(0 0% 0% / 0.3), 0 4px 12px hsl(0 0% 0% / 0.2);
+    --shadow-elevated: 0 8px 32px hsl(0 0% 0% / 0.4), 0 2px 8px hsl(0 0% 0% / 0.3);
+    --shadow-glow: 0 0 30px hsl(14 100% 55% / 0.25), 0 0 60px hsl(14 100% 55% / 0.1);
+
+    --sidebar-background: 240 5% 6%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 14 100% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 4% 12%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 240 4% 14%;
+    --sidebar-ring: 14 100% 55%;
+  }
+
+  .dark {
+    /* Already dark by default */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    background-color: #0B0B0D;
+  }
+}
+
+@layer utilities {
+  .gradient-accent {
+    background: var(--gradient-accent);
+  }
+  .gradient-medical {
+    background: var(--gradient-accent);
+  }
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+  .glass-surface {
+    background: hsl(240 5% 10% / 0.5);
+    backdrop-filter: blur(16px);
+    border: 1px solid hsl(240 4% 18% / 0.5);
+  }
+  .glass-surface-strong {
+    background: hsl(240 5% 10% / 0.7);
+    backdrop-filter: blur(24px);
+    border: 1px solid hsl(240 4% 20% / 0.5);
+  }
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  .glow-red {
+    box-shadow: 0 0 20px hsl(0 100% 59% / 0.3), 0 0 40px hsl(0 100% 59% / 0.1);
+  }
+  .glow-orange {
+    box-shadow: 0 0 20px hsl(25 100% 50% / 0.3), 0 0 40px hsl(25 100% 50% / 0.1);
+  }
+  .risk-green {
+    background: var(--gradient-risk-green);
+  }
+  .risk-yellow {
+    background: var(--gradient-risk-yellow);
+  }
+  .risk-red {
+    background: var(--gradient-risk-red);
+  }
+  .text-gradient-accent {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}

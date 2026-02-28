@@ -1,0 +1,13 @@
+# Dependencies and build
+node_modules
+.next
+
+# Env and secrets
+.env
+.env.local
+.env.*.local
+
+# OS and editors
+.DS_Store
+.idea
+*.log
