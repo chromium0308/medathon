@@ -31,9 +31,6 @@ const Header = ({ variant = "landing" }: { variant?: "landing" | "patient" | "cl
               <Link href="/#architecture" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Architecture
               </Link>
-              <Link href="/#testimonials" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                Testimonials
-              </Link>
               <Link href="/apple-watch" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground flex items-center gap-1.5">
                 <Watch className="h-3.5 w-3.5" />
                 Apple Watch
@@ -53,9 +50,6 @@ const Header = ({ variant = "landing" }: { variant?: "landing" | "patient" | "cl
               </Link>
               <Link href="/#architecture" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Architecture
-              </Link>
-              <Link href="/#testimonials" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                Testimonials
               </Link>
               <Link href="/apple-watch" className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground flex items-center gap-1.5">
                 <Watch className="h-3.5 w-3.5" />
@@ -107,7 +101,6 @@ const Header = ({ variant = "landing" }: { variant?: "landing" | "patient" | "cl
                 <Link href="/#how-it-works" className="rounded-md px-3 py-2 text-sm text-muted-foreground" onClick={() => setMobileOpen(false)}>How It Works</Link>
                 <Link href="/#features" className="rounded-md px-3 py-2 text-sm text-muted-foreground" onClick={() => setMobileOpen(false)}>Features</Link>
                 <Link href="/#architecture" className="rounded-md px-3 py-2 text-sm text-muted-foreground" onClick={() => setMobileOpen(false)}>Architecture</Link>
-                <Link href="/#testimonials" className="rounded-md px-3 py-2 text-sm text-muted-foreground" onClick={() => setMobileOpen(false)}>Testimonials</Link>
                 <Link href="/apple-watch" className="rounded-md px-3 py-2 text-sm text-muted-foreground" onClick={() => setMobileOpen(false)}>Apple Watch</Link>
                 <Button asChild className="gradient-accent border-0 text-primary-foreground">
                   <Link href="/onboarding">Get Started</Link>
@@ -123,7 +116,6 @@ const Header = ({ variant = "landing" }: { variant?: "landing" | "patient" | "cl
                 <Link href="/#how-it-works" className="rounded-md px-3 py-2 text-sm text-muted-foreground" onClick={() => setMobileOpen(false)}>How It Works</Link>
                 <Link href="/#features" className="rounded-md px-3 py-2 text-sm text-muted-foreground" onClick={() => setMobileOpen(false)}>Features</Link>
                 <Link href="/#architecture" className="rounded-md px-3 py-2 text-sm text-muted-foreground" onClick={() => setMobileOpen(false)}>Architecture</Link>
-                <Link href="/#testimonials" className="rounded-md px-3 py-2 text-sm text-muted-foreground" onClick={() => setMobileOpen(false)}>Testimonials</Link>
                 <Link href="/apple-watch" className="rounded-md px-3 py-2 text-sm text-muted-foreground">Apple Watch</Link>
                 <Link href="/" className="rounded-md px-3 py-2 text-sm text-muted-foreground">Home</Link>
               </>

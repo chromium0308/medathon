@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Header from "@/components/Header";
+import type { RiskLevel } from "@/lib/mockData";
 
 const STEPS = [
   { icon: User, label: "Patient Profile" },
@@ -42,6 +43,57 @@ const PatientOnboarding = () => {
   const [medications, setMedications] = useState<MedEntry[]>([]);
   const [labs, setLabs] = useState({ creatinine: "", potassium: "", sodium: "", inr: "", date: "" });
   const [customMed, setCustomMed] = useState("");
+
+  const generateDemoMetrics = () => {
+    if (typeof window === "undefined") return;
+
+    const baseWeight = (() => {
+      const parsed = parseFloat(profile.weight || "");
+      return Number.isFinite(parsed) ? parsed : 82;
+    })();
+
+    const today = new Date();
+
+    const makeSeries = (startValue: number, min: number, max: number, step: number, decimals = 0) => {
+      const series: { date: string; value: number }[] = [];
+      let value = startValue;
+      for (let i = 29; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        value += (Math.random() * 2 - 1) * step;
+        if (value < min) value = min + Math.random() * step;
+        if (value > max) value = max - Math.random() * step;
+        const rounded = parseFloat(value.toFixed(decimals));
+        series.push({
+          date: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+          value: rounded,
+        });
+      }
+      return series;
+    };
+
+    const hrSeries = makeSeries(60 + Math.random() * 20, 55, 105, 3, 0); // 55–105 bpm
+    const hrvSeries = makeSeries(40 + Math.random() * 40, 20, 120, 5, 0); // 20–120 ms
+    const rrSeries = makeSeries(14 + Math.random() * 4, 10, 24, 1, 0); // 10–24 br/min
+    const stepsSeries = makeSeries(4000 + Math.random() * 3000, 1000, 12000, 500, 0); // 1k–12k steps
+    const sleepSeries = makeSeries(6 + Math.random() * 1.5, 4, 9, 0.3, 1); // 4–9 hours
+    const weightSeries = makeSeries(baseWeight + (Math.random() * 2 - 1), baseWeight - 3, baseWeight + 3, 0.3, 1); // ±3 kg around baseline
+
+    const riskScore = Math.floor(25 + Math.random() * 50); // 25–75%
+    const riskLevel: RiskLevel = riskScore >= 65 ? "red" : riskScore >= 40 ? "yellow" : "green";
+
+    const demoMetrics = {
+      heartRate: { series: hrSeries, current: hrSeries[hrSeries.length - 1].value },
+      hrv: { series: hrvSeries, current: hrvSeries[hrvSeries.length - 1].value },
+      respiratoryRate: { series: rrSeries, current: rrSeries[rrSeries.length - 1].value },
+      steps: { series: stepsSeries, current: stepsSeries[stepsSeries.length - 1].value },
+      sleep: { series: sleepSeries, current: sleepSeries[sleepSeries.length - 1].value },
+      weight: { series: weightSeries, current: weightSeries[weightSeries.length - 1].value },
+      risk: { level: riskLevel, score: riskScore },
+    };
+
+    window.localStorage.setItem("ventria.demoMetrics", JSON.stringify(demoMetrics));
+  };
 
   const addMedication = (name: string) => {
     if (!medications.find((m) => m.name === name)) {
@@ -108,6 +160,7 @@ const PatientOnboarding = () => {
 
   const launchDashboard = () => {
     saveToFirebase();
+    generateDemoMetrics();
     router.push("/dashboard");
   };
 

@@ -16,6 +16,18 @@ import {
 } from "@/lib/mockData";
 import type { MetricPayload } from "@/lib/syncStore";
 
+type DemoSeries = { date: string; value: number }[];
+
+interface DemoMetrics {
+  heartRate: { series: DemoSeries; current: number };
+  hrv: { series: DemoSeries; current: number };
+  respiratoryRate: { series: DemoSeries; current: number };
+  steps: { series: DemoSeries; current: number };
+  sleep: { series: DemoSeries; current: number };
+  weight: { series: DemoSeries; current: number };
+  risk: { level: RiskLevel; score: number };
+}
+
 interface AnalyzeResult {
   riskLevel: RiskLevel;
   riskScore: number;
@@ -141,9 +153,22 @@ const PatientDashboard = () => {
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [randomDefaultScore, setRandomDefaultScore] = useState<number | null>(null);
+  const [demoMetrics, setDemoMetrics] = useState<DemoMetrics | null>(null);
 
   useEffect(() => {
     setRandomDefaultScore(Math.floor(Math.random() * 40));
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const raw = window.localStorage.getItem("ventria.demoMetrics");
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw) as DemoMetrics;
+      setDemoMetrics(parsed);
+    } catch {
+      // ignore parse errors
+    }
   }, []);
 
   const loadSyncData = async (code: string) => {
@@ -300,7 +325,7 @@ const PatientDashboard = () => {
 
   // Auto-compute heart failure vulnerability when profile was loaded from onboarding but no analysis yet
   useEffect(() => {
-    if (!profile || analysis !== null || analysisLoading) return;
+    if (!profile || analysis !== null || analysisLoading || demoMetrics) return;
     const heartRate = syncData?.liveHR ?? (hrData.length ? hrData[hrData.length - 1].value : undefined);
     const hrv = syncData?.liveHRV ?? (hrvData.length ? hrvData[hrvData.length - 1].value : undefined);
     const rr = rrData.length ? rrData[rrData.length - 1].value : undefined;
@@ -308,33 +333,51 @@ const PatientDashboard = () => {
     const sleepHours = sleepData.length ? sleepData[sleepData.length - 1].value : undefined;
     const weightKg = weightData.length ? weightData[weightData.length - 1].value : undefined;
     runAnalyze({ heartRate, hrv, respiratoryRate: rr, steps, sleepHours, weightKg });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once when profile loads
-  }, [profile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once when profile loads (and not in demo mode)
+  }, [profile, demoMetrics]);
 
   const hrData = useMemo(() => {
+    if (demoMetrics?.heartRate?.series?.length) {
+      return demoMetrics.heartRate.series;
+    }
     const fromSync = metricsToChartData(syncData?.metrics, "heartRate");
     return fromSync.length ? fromSync : generateHeartRateData();
-  }, [syncData?.metrics]);
+  }, [syncData?.metrics, demoMetrics]);
   const hrvData = useMemo(() => {
+    if (demoMetrics?.hrv?.series?.length) {
+      return demoMetrics.hrv.series;
+    }
     const fromSync = metricsToChartData(syncData?.metrics, "hrv");
     return fromSync.length ? fromSync : generateHRVData();
-  }, [syncData?.metrics]);
+  }, [syncData?.metrics, demoMetrics]);
   const rrData = useMemo(() => {
+    if (demoMetrics?.respiratoryRate?.series?.length) {
+      return demoMetrics.respiratoryRate.series;
+    }
     const fromSync = metricsToChartData(syncData?.metrics, "respiratoryRate");
     return fromSync.length ? fromSync : generateRespiratoryData();
-  }, [syncData?.metrics]);
+  }, [syncData?.metrics, demoMetrics]);
   const weightData = useMemo(() => {
+    if (demoMetrics?.weight?.series?.length) {
+      return demoMetrics.weight.series;
+    }
     const fromSync = metricsToChartData(syncData?.metrics, "weight");
     return fromSync.length ? fromSync : generateWeightData();
-  }, [syncData?.metrics]);
+  }, [syncData?.metrics, demoMetrics]);
   const activityData = useMemo(() => {
+    if (demoMetrics?.steps?.series?.length) {
+      return demoMetrics.steps.series;
+    }
     const fromSync = metricsToChartData(syncData?.metrics, "steps");
     return fromSync.length ? fromSync : generateActivityData();
-  }, [syncData?.metrics]);
+  }, [syncData?.metrics, demoMetrics]);
   const sleepData = useMemo(() => {
+    if (demoMetrics?.sleep?.series?.length) {
+      return demoMetrics.sleep.series;
+    }
     const fromSync = metricsToChartData(syncData?.metrics, "sleep");
     return fromSync.length ? fromSync : generateSleepData();
-  }, [syncData?.metrics]);
+  }, [syncData?.metrics, demoMetrics]);
 
   const toggleSymptom = (s: string) => {
     setLoggedSymptoms((prev) => prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]);
@@ -349,22 +392,46 @@ const PatientDashboard = () => {
     if (displayRiskLevel && displayRiskScore != null && ["green", "yellow", "red"].includes(displayRiskLevel)) {
       return { level: displayRiskLevel, score: displayRiskScore };
     }
+    if (demoMetrics?.risk) {
+      return demoMetrics.risk;
+    }
     if (randomDefaultScore !== null) {
       return { level: "green" as RiskLevel, score: randomDefaultScore };
     }
     return mockRiskAlerts.reduce((max, a) => (a.score > max.score ? a : max), mockRiskAlerts[0]);
-  }, [analysis, syncData?.riskLevel, syncData?.riskScore, randomDefaultScore]);
+  }, [analysis, syncData?.riskLevel, syncData?.riskScore, randomDefaultScore, demoMetrics]);
 
-  const currentMetrics = useMemo(() => ({
-    heartRate: syncData?.liveHR ?? (hrData.length ? hrData[hrData.length - 1].value : undefined),
-    hrv: syncData?.liveHRV ?? (hrvData.length ? hrvData[hrvData.length - 1].value : undefined),
-    respiratoryRate: rrData.length ? rrData[rrData.length - 1].value : undefined,
-    steps: activityData.length ? activityData[activityData.length - 1].value : undefined,
-    sleepHours: sleepData.length ? sleepData[sleepData.length - 1].value : undefined,
-    weightKg: weightData.length ? weightData[weightData.length - 1].value : undefined,
-  }), [syncData?.liveHR, syncData?.liveHRV, hrData, hrvData, rrData, activityData, sleepData, weightData]);
+  const currentMetrics = useMemo(() => {
+    if (demoMetrics) {
+      return {
+        heartRate: demoMetrics.heartRate.current,
+        hrv: demoMetrics.hrv.current,
+        respiratoryRate: demoMetrics.respiratoryRate.current,
+        steps: demoMetrics.steps.current,
+        sleepHours: demoMetrics.sleep.current,
+        weightKg: demoMetrics.weight.current,
+      };
+    }
+    return {
+      heartRate: syncData?.liveHR ?? (hrData.length ? hrData[hrData.length - 1].value : undefined),
+      hrv: syncData?.liveHRV ?? (hrvData.length ? hrvData[hrvData.length - 1].value : undefined),
+      respiratoryRate: rrData.length ? rrData[rrData.length - 1].value : undefined,
+      steps: activityData.length ? activityData[activityData.length - 1].value : undefined,
+      sleepHours: sleepData.length ? sleepData[sleepData.length - 1].value : undefined,
+      weightKg: weightData.length ? weightData[weightData.length - 1].value : undefined,
+    };
+  }, [demoMetrics, syncData?.liveHR, syncData?.liveHRV, hrData, hrvData, rrData, activityData, sleepData, weightData]);
 
   const handleComputeWithAI = () => {
+    if (demoMetrics) {
+      const newScore = Math.floor(25 + Math.random() * 50); // 25–75%
+      const newLevel: RiskLevel = newScore >= 65 ? "red" : newScore >= 40 ? "yellow" : "green";
+      setDemoMetrics({
+        ...demoMetrics,
+        risk: { level: newLevel, score: newScore },
+      });
+      return;
+    }
     runAnalyze(currentMetrics);
   };
 
@@ -428,18 +495,9 @@ const PatientDashboard = () => {
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="font-display text-3xl font-extrabold text-foreground tracking-tight">Patient Dashboard</h1>
-            <p className="text-sm text-muted-foreground">{syncData ? `Wearable sync: ${lastSyncLabel}` : "Last wearable sync: 5 minutes ago"}</p>
+            <p className="text-sm text-muted-foreground">{syncData ? `Wearable sync: ${lastSyncLabel}` : "No wearable data yet"}</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <Button
-              onClick={handleComputeWithAI}
-              disabled={analysisLoading}
-              variant="outline"
-              className="border-primary/30 text-primary hover:bg-primary/10"
-            >
-              {analysisLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              {analysisLoading ? " Computing…" : "Compute with AI"}
-            </Button>
             <div className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ${riskColors[highestRisk.level].bg} ${riskColors[highestRisk.level].text} ${highestRisk.level === "red" ? "glow-red" : ""}`}>
               <RiskIcon level={highestRisk.level} />
               Heart failure vulnerability: {riskColors[highestRisk.level].label} — <span className="text-lg font-extrabold">{highestRisk.score}%</span>
@@ -488,6 +546,9 @@ const PatientDashboard = () => {
               <VitalChart data={sleepData} label="Sleep Duration" color="hsl(260, 60%, 55%)" unit="hours" />
               <VitalChart data={weightData} label="Daily Weight" color="hsl(0, 100%, 59%)" unit="kg" />
             </div>
+            <p className="mt-6 text-xs text-muted-foreground">
+              This wearable data is provided as a proof of concept for demonstration purposes only. If selected, these metrics will be populated using data securely collected from our Apple Watch add-in.
+            </p>
           </TabsContent>
 
           <TabsContent value="manual">

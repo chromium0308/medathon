@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Heart, Activity, Brain, Shield, Watch, Smartphone, Cloud, Monitor, ArrowRight, Star, Pill, FlaskConical, AlertTriangle, Stethoscope, TrendingUp, Zap } from "lucide-react";
+import { Heart, Activity, Brain, Shield, Watch, Smartphone, Cloud, Monitor, ArrowRight, Pill, FlaskConical, AlertTriangle, Stethoscope, TrendingUp, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 
@@ -196,39 +196,6 @@ const Index = () => {
               </div>
             </div>
           </motion.div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section id="testimonials" className="py-24">
-        <div className="container mx-auto px-4">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} className="mb-16 text-center">
-            <motion.h2 variants={fadeUp} custom={0} className="font-display text-3xl font-bold text-foreground sm:text-5xl">
-              Trusted by Clinicians & Patients
-            </motion.h2>
-          </motion.div>
-          <div className="grid gap-6 md:grid-cols-3">
-            {[
-              { name: "Dr. Sarah Mitchell", role: "Cardiologist, Mayo Clinic", quote: "Ventria's AI risk engine caught a decompensation event 48 hours before clinical symptoms appeared. This is the future of heart failure management." },
-              { name: "James W.", role: "HFrEF Patient", quote: "I feel safer knowing my vitals are continuously monitored. The medication safety alerts have been life-saving — literally." },
-              { name: "Dr. Raj Patel", role: "Heart Failure Specialist", quote: "The kidney-adjusted dosing alerts alone have prevented several adverse events in my practice. Remarkable technology." },
-            ].map((t, i) => (
-              <motion.div key={t.name} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={i}
-                className="rounded-2xl glass-surface p-6"
-              >
-                <div className="mb-3 flex gap-0.5">
-                  {[...Array(5)].map((_, j) => (
-                    <Star key={j} className="h-4 w-4 fill-primary text-primary" />
-                  ))}
-                </div>
-                <p className="mb-4 text-sm leading-relaxed text-muted-foreground">&ldquo;{t.quote}&rdquo;</p>
-                <div>
-                  <p className="font-display text-sm font-semibold text-foreground">{t.name}</p>
-                  <p className="text-xs text-muted-foreground">{t.role}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
 
