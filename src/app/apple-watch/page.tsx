@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Heart,
@@ -17,6 +18,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 const DATA_TYPES = [
   {
@@ -141,6 +143,18 @@ export default function AppleWatchPage() {
             <p className="text-sm text-muted-foreground leading-relaxed">
               By using the logs of past data from Apple Health, Ventria can detect minimal changes over time—small shifts in resting heart rate, HRV, or weight that might signal early risk—so you and your care team can act before larger changes occur.
             </p>
+          </div>
+          <div className="mt-6 flex justify-center">
+            <Button
+              size="lg"
+              variant="outline"
+              asChild
+              className="border-primary/40 text-primary hover:bg-primary/10"
+            >
+              <Link href="https://github.com/chromium0308/ventria_apple_conect" target="_blank" rel="noreferrer">
+                Apple Watch Connect Code
+              </Link>
+            </Button>
           </div>
         </motion.section>
 

@@ -218,6 +218,16 @@ const Index = () => {
               <Button size="lg" variant="outline" asChild className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
                 <Link href="/clinician">Clinician Access</Link>
               </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="border-primary-foreground/30 bg-primary-foreground/5 text-primary-foreground hover:bg-primary-foreground/15"
+              >
+                <Link href="https://github.com/chromium0308/ventria_apple_conect" target="_blank" rel="noreferrer">
+                  Apple Watch Connect Code
+                </Link>
+              </Button>
             </motion.div>
           </motion.div>
         </div>
